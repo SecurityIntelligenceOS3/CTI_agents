@@ -1,0 +1,20 @@
+---
+Name: Phishtank Agent
+Id: phishtank
+Interval: 60
+Description: Scrapes the Phishtank Database and stores the interesting information into a MongoDB instance
+---
+Name: Reddit Agent
+Id: reddit
+Interval: 10
+Description: Collects new reddit posts and stores the interesting information into a MongoDB instance
+---
+Name: Pastebin Agent
+Id: pastebin
+Interval: 60
+Description: Scrapes pastebin stuff
+---
+Name: Twitter Agent
+Id: twitter
+Interval: 0
+Description: Collects new reddit posts and stores the interesting information into a MongoDB instance
