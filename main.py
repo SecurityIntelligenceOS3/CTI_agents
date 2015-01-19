@@ -95,7 +95,30 @@ def print_info(exec_list):
     for k in exec_list[3]:
         print k + " won't run"
 
-#def run_one(mid):
+
+def run_one(name, path):
+    func = imp.load_source(name, path)
+    t = threading.Thread(target=func.run, args=[])
+    t.start()
+
+
+def run_all(run_list):
+    for agent in run_list:
+        path = "request/" + agent + "/" + agent + ".py"
+        run_one(agent, path)
+
+
+def iterate_one(name, path, interval):
+    func = imp.load_source(name, path)
+    t = threading.Thread(target=func.iterate, args=[interval])
+    t.setDaemon(True)
+    t.start()
+
+
+def iterate_all(iter_list):
+    for agent in iter_list:
+        path = "request/" + agent + "/" + agent + ".py"
+        iterate_one(agent, path, iter_list[agent]*60)
 
 
 def main(argv):
@@ -104,27 +127,13 @@ def main(argv):
     long_arguments = load_arguments(agent_list) #
     agent_list = parse_arguments(argv, long_arguments, agent_list)
     exec_list = make_exec_lists(agent_list)
-
     print_info(exec_list)
+    run_all(exec_list[0])
+    iterate_all(exec_list[1])
 
-    # for k in run:
-    #     if run[k] < 0:
-    #         print k + " won't run"
-    #     elif run[k] == 0:
-    #         print k + " will run just once"
-    #         f = k + "/" + k + ".py"
-    #         func = imp.load_source(k, f)
-    #         t = threading.Thread(target=func.run, args=[])
-    #         t.start()
-    #     else:
-    #         print k + " will run every " + str(run[k]) + " minutes"
-    #         f = k + "/" + k + ".py"
-    #         func = imp.load_source(k, f)
-    #         t = threading.Thread(target=func.iterate, args=[run[k]*60])
-    #         t.daemon = True
-    #         t.start()
-    # while True:
-    #     time.sleep(1)
+    if len(exec_list[1]) != 0:
+        while True:
+            time.sleep(1)
 
 
 if __name__ == "__main__":

@@ -1,11 +1,13 @@
 import urllib2
 import json
 import time
+import datetime
 from pymongo import MongoClient 
+
 
 def run():
 
-    # connect to mongoDB database
+    # connect to MongoDB database
     client = MongoClient('localhost', 27017)
     db = client['CTI_IR']
     collection = db['reddit']
@@ -27,11 +29,13 @@ def run():
         num_comments = i["data"]["num_comments"]
         ups = i["data"]["ups"]
         # add values to the entry
-        entry = {"url": url, "title": title, "score": score, "num_comments": num_comments, "ups": ups}  # insert the entry in mongoDB
+        entry = {"u": url, "t": title, "sc": score, "nc": num_comments, "up": ups}  # insert the entry in mongoDB
         collection.insert(entry)
 
+    print "Reddit scraping has finished"
 
 def iterate(interval):
     while True:
         run()
+        print "Iteration: " + str(datetime.datetime.now())
         time.sleep(interval)
