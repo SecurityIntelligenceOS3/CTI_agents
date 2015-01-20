@@ -1,7 +1,6 @@
 import json
 import urllib2
 import time
-import os
 import datetime
 from pymongo import MongoClient as MC
 

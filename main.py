@@ -121,6 +121,21 @@ def iterate_all(iter_list):
         iterate_one(agent, path, iter_list[agent]*60)
 
 
+def stream_one(name, path):
+    func = imp.load_source(name, path)
+    t = threading.Thread(target=func.fire, args=[])
+    t.setDaemon(True)
+    t.start()
+
+
+def stream_all(stream_list):
+    for agent in stream_list:
+        path = "streaming/" + agent + "/" + agent + ".py"
+        stream_one(agent, path)
+
+
+
+
 def main(argv):
 
     agent_list = load_agents()  # load all available retrieval agents with defaults
@@ -130,8 +145,9 @@ def main(argv):
     print_info(exec_list)
     run_all(exec_list[0])
     iterate_all(exec_list[1])
+    stream_all(exec_list[2])
 
-    if len(exec_list[1]) != 0:
+    if len(exec_list[1]) != 0 or len(exec_list[2]) != 0:
         while True:
             time.sleep(1)
 
