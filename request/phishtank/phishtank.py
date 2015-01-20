@@ -2,27 +2,58 @@ import json
 import urllib2
 import time
 import datetime
+import yaml
 from pymongo import MongoClient as MC
 
 
-def run():
+def setup():
+    setup_file = open("./request/phishtank/setup.yaml", "r")
+    setup_docs = yaml.load_all(setup_file)
 
-    key = "f2ff110cbc701a6bad4d40c2886184cc047ed8f0e503bab578a38f682894dbbb"
-    db_url = "http://data.phishtank.com/data/%s/online-valid.json" % key
+    for doc in setup_docs:
+        key = doc['key']
+        db_url = doc['url'] % key
 
-    response = urllib2.urlopen(db_url)  # download db
+    return db_url
 
-    # MongoDB connect
+
+def download(url):
+
+    response = urllib2.urlopen(url)
+    return response
+
+
+def mongo_connect():
 
     client = MC()
-    db = client.CTI_IR 
+    db = client.CTI_IR
     collection = db.phishtank
 
-    collection.remove({})  # delete all data
-    input = json.loads(response.read())
+    return client, collection
 
+
+def mongo_remove(collection):
+
+    collection.remove({})
+
+
+def mongo_insert(collection, entries):
+
+    for entry in entries:
+        collection.insert(entry)
+
+
+def mongo_disconnect(client):
+
+    client.close()
+
+
+def parse_json(response):
+
+    jinput = json.loads(response.read())
+    entries = []
     # for each entry in file:
-    for j in input:
+    for j in jinput:
         # parse specific values
         try:
             url = j['url'] #url
@@ -33,18 +64,33 @@ def run():
             submission_time = j['submission_time']  # submission_time
             verification_time = j['verification_time']  # verification_time
             target = j['target']  # target
-    
-        except:
-            pass
-            # write to MongoDB
-        try:
-            entry = {"u": url, "id": phish_id, "ip": ip_address, "cb": cidr_block, "an": announcing_network, "st": submission_time, "vt": verification_time, "t": target}
-            collection.insert(entry)
+
         except:
             pass
 
-    client.close()
-    print "Phistank scraping has finished"
+        entry = {"u": url, "id": phish_id, "ip": ip_address, "cb": cidr_block, "an": announcing_network, "st": submission_time, "vt": verification_time, "t": target}
+        entries.append(entry)
+
+    return entries
+
+
+def run():
+
+    db_url = setup()
+
+    response = download(db_url)
+
+    client, collection = mongo_connect()
+
+    mongo_remove(collection)  # delete all data
+
+    to_mongo = parse_json(response)
+
+    mongo_insert(collection, to_mongo)
+
+    mongo_disconnect(client)
+
+    print "Phishtank scraping has finished"
 
 
 def iterate(interval):
@@ -52,6 +98,3 @@ def iterate(interval):
         run()
         print "Iteration: " + str(datetime.datetime.now())
         time.sleep(interval)
-
-
-# end
