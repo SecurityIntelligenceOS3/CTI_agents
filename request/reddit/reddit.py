@@ -8,7 +8,7 @@ from pymongo import MongoClient
 def run():
 
     # connect to MongoDB database
-    client = MongoClient('localhost', 27017)
+    client = MongoClient()
     db = client['CTI_IR']
     collection = db['reddit']
     
@@ -32,7 +32,10 @@ def run():
         entry = {"u": url, "t": title, "sc": score, "nc": num_comments, "up": ups}  # insert the entry in mongoDB
         collection.insert(entry)
 
+    client.close()
     print "Reddit scraping has finished"
+
+
 
 def iterate(interval):
     while True:

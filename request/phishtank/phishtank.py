@@ -43,6 +43,7 @@ def run():
         except:
             pass
 
+    client.close()
     print "Phistank scraping has finished"
 
 
