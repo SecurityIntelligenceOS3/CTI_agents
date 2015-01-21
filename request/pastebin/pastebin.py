@@ -6,6 +6,7 @@ from scrapy.crawler import Crawler
 from scrapy import log, signals
 from scrapy.utils.project import get_project_settings
 from pymongo import MongoClient as MC
+import time
 
 # Exceptionally bad code!!!!
 
@@ -47,5 +48,11 @@ def run():
     crawler.configure()
     crawler.crawl(spider)
     crawler.start()
-    reactor.run()  # the script will block here until the spider_closed signal was sent
+    reactor.run(installSignalHandlers=0)  # the script will block here until the spider_closed signal was sent
 
+
+def iterate(interval):
+    while True:
+        run()
+        print "Iteration: " + str(datetime.datetime.now())
+        time.sleep(interval)
