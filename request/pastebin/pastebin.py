@@ -7,6 +7,7 @@ from scrapy import log, signals
 from scrapy.utils.project import get_project_settings
 from pymongo import MongoClient as MC
 import time
+import datetime
 
 # Exceptionally bad code!!!!
 

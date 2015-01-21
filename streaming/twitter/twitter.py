@@ -5,7 +5,7 @@ from pymongo import MongoClient as MC
 import yaml
 import json
 
-#very bad code at the moment 
+#very bad code at the moment
 
 
 def setup():
