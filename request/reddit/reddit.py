@@ -45,8 +45,11 @@ def mongo_disconnect(client):
 
 
 def download(url):
+    try:
+        response = urllib2.urlopen(url)
+    except:
+        response = "Could not retrieve resourse"
 
-    response = urllib2.urlopen(url)
     return response
 
 

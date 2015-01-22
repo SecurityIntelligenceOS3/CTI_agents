@@ -31,14 +31,17 @@ class PastebinSpider(CrawlSpider):
     collection = db.pastebin
 
     def parse_items(self, response):
+        try:
 
-        items = PastebinItem()
-        items['url'] = response.url
-        items['paste'] = response.xpath("//textarea[@id='paste_code']/text()").extract()
-        items['time'] = response.xpath("//div[@class='paste_box_line2']//span[1]/@title").extract()
-        items['uniq_visitors'] = response.xpath("//div[@class='paste_box_line2']//span[2]/text()").extract()
-        entry = {'u': items['url'], 'p': items['paste'], 't': items['time'], 'uv': items['uniq_visitors']}
-        self.collection.insert(entry)
+            items = PastebinItem()
+            items['url'] = response.url
+            items['paste'] = response.xpath("//textarea[@id='paste_code']/text()").extract()
+            items['time'] = response.xpath("//div[@class='paste_box_line2']//span[1]/@title").extract()
+            items['uniq_visitors'] = response.xpath("//div[@class='paste_box_line2']//span[2]/text()").extract()
+            entry = {'u': items['url'], 'p': items['paste'], 't': items['time'], 'uv': items['uniq_visitors']}
+            self.collection.insert(entry)
+        except:
+            print "Something went wrong"
 
 
 def run():
@@ -50,6 +53,7 @@ def run():
     crawler.crawl(spider)
     crawler.start()
     reactor.run(installSignalHandlers=0)  # the script will block here until the spider_closed signal was sent
+    print "Pastebin scraping has finished"
 
 
 def iterate(interval):
