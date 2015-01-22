@@ -45,17 +45,21 @@ def mongo_disconnect(client):
 
 
 def download(url):
+    worked = True
+    response = ""
     try:
-        response = urllib2.urlopen(url)
+        connection = urllib2.urlopen(url)
+        response = connection.read()
+        connection.close()
     except:
-        response = "Could not retrieve resourse"
+        worked = False
 
-    return response
+    return worked, response
 
 
 def parse_json(response):
 
-    jinput = json.loads(response.read())
+    jinput = json.loads(response)
     entries = []
 
     for i in jinput["data"]["children"]:
@@ -79,20 +83,17 @@ def run():
     responses = []
 
     for url in urls:
-        response = download(url)
-        if type(response) != str:
+        worked, response = download(url)
+        if worked:
             responses.append(response)
             for response in responses:
                 entries = parse_json(response)
                 mongo_insert(collection, entries)
-                print "Reddit scraping has finished"
         else:
-            print response
+            print "Could not retrieve resourse"
 
     mongo_disconnect(client)
-
-
-
+    print "Reddit scraping has finished"
 
 def iterate(interval):
     while True:
