@@ -46,7 +46,6 @@ class PastebinSpider(CrawlSpider):
 
 
 def run():
-    print "pastebin!!!"
     spider = PastebinSpider()
     settings = get_project_settings()
     crawler = Crawler(settings)
