@@ -54,6 +54,7 @@ def run():
     crawler.start()
     reactor.run(installSignalHandlers=0)  # the script will block here until the spider_closed signal was sent
     print "Pastebin scraping has finished"
+    reactor.stop()
 
 
 def iterate(interval):
