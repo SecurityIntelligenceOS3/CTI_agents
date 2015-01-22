@@ -81,13 +81,17 @@ def run():
 
     db_url = setup()
     response = download(db_url)
-    client, collection = mongo_connect()
-    mongo_remove(collection)  # delete all data
-    to_mongo = parse_json(response)
-    mongo_insert(collection, to_mongo)
-    mongo_disconnect(client)
+    if type(response) != str:
+        client, collection = mongo_connect()
+        mongo_remove(collection)  # delete all data
+        to_mongo = parse_json(response)
+        mongo_insert(collection, to_mongo)
+        mongo_disconnect(client)
+        print "Phishtank scraping has finished"
+    else:
+        print response
 
-    print "Phishtank scraping has finished"
+
 
 
 def iterate(interval):

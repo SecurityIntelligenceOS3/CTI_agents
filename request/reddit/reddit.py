@@ -79,15 +79,19 @@ def run():
     responses = []
 
     for url in urls:
-        responses.append(download(url))
-
-    for response in responses:
-        entries = parse_json(response)
-        mongo_insert(collection, entries)
+        response = download(url)
+        if type(response) != str:
+            responses.append(response)
+            for response in responses:
+                entries = parse_json(response)
+                mongo_insert(collection, entries)
+                print "Reddit scraping has finished"
+        else:
+            print response
 
     mongo_disconnect(client)
 
-    print "Reddit scraping has finished"
+
 
 
 def iterate(interval):
