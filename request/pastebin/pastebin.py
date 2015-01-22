@@ -58,7 +58,7 @@ def run():
 
 
 def iterate(interval):
-    while True:
-        run()
-        print "Iteration: " + str(datetime.datetime.now())
-        time.sleep(interval)
+    reactor.callLater(interval, run, [])    # while True:
+    #     run()
+    #     print "Iteration: " + str(datetime.datetime.now())
+    #     time.sleep(interval)
