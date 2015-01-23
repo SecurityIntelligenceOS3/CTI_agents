@@ -45,11 +45,12 @@ class PastebinSpider(CrawlSpider):
             print "Something went wrong"
 
 
-def run():
+def crawl(one):
     spider = PastebinSpider()
     settings = get_project_settings()
     crawler = Crawler(settings)
-    #crawler.signals.connect(reactor.stop, signal=signals.spider_closed)
+    if one:
+        crawler.signals.connect(reactor.stop, signal=signals.spider_closed)
     crawler.configure()
     crawler.crawl(spider)
     crawler.start()
@@ -57,9 +58,14 @@ def run():
     print "Iteration: " + str(datetime.datetime.now())
 
 
+def run():
+    crawl(True)
+    reactor.run(installSignalHandlers=0)
+
+
 def iterate(interval):
-    l = task.LoopingCall(run)
-    l.start(interval) # call every second
+    l = task.LoopingCall(crawl, False)
+    l.start(interval)  # call every second
 
     # l.stop() will stop the looping calls
     reactor.run(installSignalHandlers=0)
